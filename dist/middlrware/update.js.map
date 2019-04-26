@@ -1,0 +1,1 @@
+{"version":3,"file":"update.js","sourceRoot":"","sources":["../../src/middlrware/update.ts"],"names":[],"mappings":";;AAAA,MAAM,OAAO,GAAG,OAAO,CAAC,UAAU,CAAC,CAAC;AAEvB,QAAA,gBAAgB,GAAG,OAAO,CAAC;IACtC,SAAS,EAAE,IAAI;IACf,UAAU,EAAE;QACV,WAAW,EAAE,GAAG,GAAG,IAAI,GAAG,IAAI,CAAI,oBAAoB;KACvD;CACF,CAAC,CAAC"}
