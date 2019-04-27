@@ -2,6 +2,8 @@
 import { statusCode } from '../util/status-code';
 import { BaseContext } from 'koa';
 import ArticleModel from '../modules/article';
+import ArticleTagsModel from '../modules/article_tag';
+
 const uuid = require('uuid/v1');
 
 interface Article {
@@ -16,16 +18,36 @@ interface Article {
   createDate?: number;
   modifyDate?: number;
   views?: number;
+  tagArr?:Array<string>;
   [propName: string]: any;
 }
+
+interface ArticleTags {
+  tagName: string;
+  createDate?: number;
+}
+
 export class ArticleController {
   // 创建
   static async create(ctx: BaseContext) {
     let atricle: Article = ctx.request.body;
+    const { tagArr } = ctx.request.body;
+    let newTagNameArr:Array<ArticleTags> = []
+    let dbTagNameArr:Array<string> = [];
     atricle = {
       ...atricle,
       id: uuid()
     };
+    const dbTagArr = await ArticleTagsModel.getTags() || []
+    for (let item of dbTagArr) {
+      dbTagNameArr.push(item.tagName);
+    }
+    tagArr.forEach((itemName: string) => {
+      if (!dbTagNameArr.includes(itemName)) newTagNameArr.push({ tagName: itemName })
+    });
+
+    await ArticleTagsModel.creates(newTagNameArr)
+
     let newatricle: Article =  await ArticleModel.create(atricle);
     if (newatricle) {
       ctx.response.status = 200;
@@ -52,10 +74,21 @@ export class ArticleController {
   // 修改
   static async pacthArticle(ctx: BaseContext) {
     const { id } = ctx.params;
+    const { tagArr = [] } = ctx.request.body;
+    // 判断是否有新标签
+    let newTagNameArr:Array<ArticleTags> = []
+    let dbTagNameArr:Array<string> = [];
+    const dbTagArr = await ArticleTagsModel.getTags() || []
+    for (let item of dbTagArr) {
+      dbTagNameArr.push(item.tagName);
+    }
+    tagArr.forEach((itemName: string) => {
+      if (!dbTagNameArr.includes(itemName)) newTagNameArr.push({ tagName: itemName })
+    });
+    await ArticleTagsModel.creates(newTagNameArr)
+    // 数据
     const articleObj: Article = ctx.request.body;
-    let new_articleObj = JSON.parse(JSON.stringify(articleObj));
-    delete new_articleObj.id;
-    const { n } = await ArticleModel.updateArticle(id, new_articleObj);
+    const { n } = await ArticleModel.updateArticle(id, articleObj);
     if (n === 1) {
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('ok');

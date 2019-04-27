@@ -1,8 +1,9 @@
 import * as mongoose from 'mongoose';
+const uuid = require('uuid/v1');
 const articleTagsSchema = new mongoose.Schema({
   id: {
     type: String,
-    required: true
+    default: uuid()
   },
   tagName: {
     type: String,

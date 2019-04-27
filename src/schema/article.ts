@@ -2,7 +2,8 @@ import * as mongoose from 'mongoose';
 const articlesSchema = new mongoose.Schema({
   // 文章id
   id: {
-    type: String
+    type: String,
+    index: true
   },
   // 封面图
   banner: {
@@ -41,12 +42,14 @@ const articlesSchema = new mongoose.Schema({
   // 创建时间
   createDate: {
     type: Number,
-    default: new Date().getTime()
+    default: new Date().getTime(),
+    index: true
   },
   // 修改时间
   modifyDate: {
     type: Number,
-    default: new Date().getTime()
+    default: new Date().getTime(),
+    index: true
   },
   // 浏览人数
   views: {
@@ -54,7 +57,7 @@ const articlesSchema = new mongoose.Schema({
     default: 0
   },
   // 标签
-  tags: {
+  tagArr: {
     type: Array,
     default: []
   },
@@ -66,6 +69,5 @@ const articlesSchema = new mongoose.Schema({
 }, {
   versionKey: false
 });
-console.info('1111', new Date().getTime());
 
 export default articlesSchema;

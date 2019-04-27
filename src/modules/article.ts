@@ -20,7 +20,10 @@ export default class ArticleModel {
     return await ArticleDbModel({ ...article }).save();
   }
   static async findArticle(option: Article) {
-    return await ArticleDbModel.findOne(option);
+    return await ArticleDbModel.findOne(option,{_id: 0});
+  }
+  static async findAtricles(option: Article) {
+
   }
   static async updateArticle(id: string, option: Article) {
     return await ArticleDbModel.updateOne({ id }, { ...option });

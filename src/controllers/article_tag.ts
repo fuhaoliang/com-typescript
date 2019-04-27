@@ -5,15 +5,19 @@ import ArticleTagsModel from '../modules/article_tag';
 const uuid = require('uuid/v1');
 
 interface ArticleTags {
-  id: string;
   tagName: string;
 }
 
 export class ArticleTagsController {
   static async create(ctx: BaseContext) {
-    let { tagName, id } = ctx.request.body;
-    if (!id) id = uuid();
-    const tags = await ArticleTagsModel.create({ tagName, id });
+    let { tagName } = ctx.request.body;
+    const isExit = await ArticleTagsModel.findTag(tagName);
+    console.info('isExit', isExit);
+    if (isExit) {
+      ctx.body = statusCode.ERROR_412('标签已存在');
+      return
+    }
+    const tags = await ArticleTagsModel.create({ tagName });
     if (tags) {
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('ok', {
@@ -27,10 +31,8 @@ export class ArticleTagsController {
   }
   static async creates(ctx: BaseContext) {
     const { tagArr } = ctx.request.body;
-    console.info('tagArr', tagArr);
     let tagNameArr = [];
     for (let item of tagArr) {
-      console.info(item);
       tagNameArr.push(item.tagName);
     }
     const isExit = await ArticleTagsModel.findExitTags(tagNameArr);
@@ -52,7 +54,7 @@ export class ArticleTagsController {
     }
   }
   static async getTags(ctx: BaseContext) {
-    const tagArr = await ArticleTagsModel.findTags();
+    const tagArr = await ArticleTagsModel.getTags()
     if (tagArr) {
       ctx.response.status = 200;
       ctx.body = statusCode.SUCCESS_200('ok', {
